@@ -4,3 +4,4 @@ backends:
   - ":9002"
   - ":9003"
 strategy: "roundrobin"
+stats_addr: ":9091"

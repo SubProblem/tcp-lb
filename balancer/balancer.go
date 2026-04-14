@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -22,6 +23,8 @@ func Start(cfg *config.Config, strategy Strategy) {
 		backends[i] = Backend{Address: addr}
 	}
 
+	http.Handle("/stats", NewStatusResponseHandler(backends))
+	go http.ListenAndServe(cfg.StatsAddr, nil)
 	StartHealthChecker(backends, 10*time.Second)
 
 	listener, err := net.Listen("tcp", cfg.ListenAddr)
@@ -66,6 +69,7 @@ func handleConnection(listener net.Conn, backend *Backend, wg *sync.WaitGroup) {
 		log.Println("Error dialing:", err)
 		return
 	}
+	backend.TotalRequests.Add(1)
 	backend.ActiveConns.Add(1)
 	defer backend.ActiveConns.Add(-1)
 	defer sender.Close()
