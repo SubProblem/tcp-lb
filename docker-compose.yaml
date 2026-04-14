@@ -1,0 +1,8 @@
+services:
+  proxy:
+    container_name: go_proxy_app
+    build: .
+    volumes:
+      - ./config.docker.yaml:/app/config.yaml
+    ports:
+      - "8080:8080"

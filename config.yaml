@@ -1,0 +1,6 @@
+listen_addr: ":8080"
+backends:
+  - ":9001"
+  - ":9002"
+  - ":9003"
+strategy: "roundrobin"
